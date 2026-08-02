@@ -1,0 +1,44 @@
+body {
+    font-family: 'Bree Serif', serif;
+    background-color: #D5898C;
+    margin: 0;
+    overflow-x: hidden;
+}
+
+.info_header {
+    display: flex;
+}
+
+header {
+    justify-content: space-between;
+    background-color: #ceb3b4;  
+    position: relative;
+    display: flex;
+    align-items: center;
+    height: 90px;
+    padding: 0 2rem;
+}
+
+.logo {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+}
+
+.titulo_principal {
+    position: absolute;
+    left: 50%;
+    font-size: 40px;
+    transform: translateX(-50%);
+    margin: 0;
+}
+
+nav a{
+    margin: 10px;
+    margin-right: 0;
+}
+
+header nav img {
+    width: 40px;
+    height: 40px;
+}

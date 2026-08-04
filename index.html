@@ -1,26 +1,242 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cravo&Canela</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://gstatic.com" crossorigin>
-    <link href="https://googleapis.com" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Cravo & Canela</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,500&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="shortcut icon" href="img/logo_redondo.png" type="image/x-icon">
 
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
+
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: 'Jost', sans-serif; }
+
+  /* ============ HEADER ============ */
+  .cc-header-wrap {
+    --bg: #c18587;
+    --bg-deep: #c39fa0;
+    --accent: #b8192d;
+    --accent-soft: #d3475a;
+    --ink: #3a2115;
+    --cream: #f7ece4;
+  }
+  .cc-header {
+    position: relative;
+    background: radial-gradient(120% 220% at 12% 0%, var(--bg-deep) 0%, var(--bg) 45%, var(--bg) 100%);
+    padding: 18px 32px;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 16px;
+    border-bottom: 1px solid rgba(58, 33, 21, 0.14);
+    overflow: hidden;
+  }
+  .cc-header::after {
+    content: "";
+    position: absolute;
+    right: -60px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 220px;
+    height: 220px;
+    border-radius: 50%;
+    border: 22px solid rgba(58, 33, 21, 0.05);
+    border-right-color: transparent;
+    border-bottom-color: transparent;
+    pointer-events: none;
+  }
+  .logo_whatsapp {
+    height: 17px;
+    width: 17px;
+  }
+  .cc-brand { display: flex; align-items: center; gap: 12px; min-width: 0; }
+  .cc-logo { width: 52px; height: 52px; border-radius: 50%; flex-shrink: 0; box-shadow: 0 2px 8px rgba(58, 33, 21, 0.25); }
+  .cc-tagline {
+    display: none; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--ink); opacity: 0.55; white-space: nowrap;
+  }
+  .cc-name {
+    grid-column: 2; justify-self: center; text-align: center; margin: 0;
+    font-family: 'Fraunces', serif; font-weight: 600; font-size: clamp(22px, 3.4vw, 34px);
+    color: var(--ink); letter-spacing: 0.01em; white-space: nowrap; position: relative;
+  }
+  .cc-name .cc-amp { display: inline-block; font-style: italic; font-weight: 500; color: var(--accent); margin: 0 6px; transform: translateY(-1px); }
+  .cc-name-swirl { display: block; width: 84px; height: 10px; margin: 4px auto 0; }
+  .cc-links { grid-column: 3; justify-self: end; display: flex; align-items: center; gap: 10px; }
+  .cc-link {
+    display: inline-flex; align-items: center; gap: 8px; text-decoration: none; color: var(--ink);
+    font-size: 13.5px; font-weight: 500; letter-spacing: 0.02em; padding: 8px 14px; border-radius: 999px;
+    border: 1px solid rgba(58, 33, 21, 0.22); background: rgba(247, 236, 228, 0.35);
+    transition: background 0.25s ease, border-color 0.25s ease, transform 0.2s ease, color 0.25s ease;
+    white-space: nowrap;
+  }
+  .cc-link svg { width: 16px; height: 16px; flex-shrink: 0; }
+  .cc-link:hover { background: var(--accent); border-color: var(--accent); color: var(--cream); transform: translateY(-1px); }
+  @media (min-width: 720px) { .cc-tagline { display: inline; } }
+  @media (max-width: 640px) {
+    .cc-header {
+      grid-template-columns: auto auto;
+      grid-template-areas: "brand links" "name  name";
+      padding: 14px 18px; row-gap: 10px;
+    }
+    .cc-brand { grid-area: brand; }
+    .cc-links { grid-area: links; grid-column: auto; }
+    .cc-name { grid-area: name; grid-column: auto; font-size: 22px; }
+    .cc-logo { width: 42px; height: 42px; }
+    .cc-link span.cc-link-label { display: none; }
+    .cc-link { padding: 9px; border-radius: 50%; }
+    .cc-link svg { width: 17px; height: 17px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .cc-link { transition: none; } }
+
+  /* ============ CATÁLOGO ============ */
+  .cc-catalogo {
+    --bg: #ceb3b4; --accent: #b8192d; --ink: #3a2115; --card: #f9f1ec;
+    background: var(--bg);
+    color: var(--ink);
+    padding: 48px 24px 80px;
+    min-height: 60vh;
+  }
+  .cc-catalogo h2 {
+    font-family: 'Fraunces', serif;
+    text-align: center;
+    font-size: clamp(24px, 3vw, 32px);
+    margin: 0 0 8px;
+  }
+  .cc-catalogo .subtitulo { text-align: center; opacity: .65; font-size: 14px; margin: 0 0 32px; }
+  .cc-filtros { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin-bottom: 32px; }
+  .cc-filtro-btn {
+    border: 1px solid rgba(58,33,21,0.25); background: transparent; color: var(--ink);
+    padding: 7px 16px; border-radius: 999px; font-size: 13px; cursor: pointer; font-family: 'Jost', sans-serif;
+  }
+  .cc-filtro-btn.ativo { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .cc-grid {
+    max-width: 1080px; margin: 0 auto;
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px;
+  }
+  .cc-produto { background: var(--card); border-radius: 16px; overflow: hidden; box-shadow: 0 6px 18px rgba(58,33,21,0.1); }
+  .cc-produto img { width: 100%; height: 220px; object-fit: cover; background: #e5d6d2; display: block; }
+  .cc-produto .info { padding: 14px 16px; }
+  .cc-produto .categoria { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--accent); opacity: .85; }
+  .cc-produto strong { display: block; font-size: 15px; margin: 3px 0 5px; font-family: 'Jost', sans-serif; font-weight: 500; }
+  .cc-produto .cor { font-size: 12.5px; opacity: .65; margin-bottom: 6px; }
+  .cc-tamanhos { display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 8px; }
+  .cc-tamanhos span { font-size: 11px; border: 1px solid rgba(58,33,21,0.25); border-radius: 6px; padding: 2px 6px; opacity: .8; }
+  .cc-produto .preco { color: var(--accent); font-weight: 600; }
+  .cc-sem-estoque { font-size: 11.5px; color: var(--accent); font-weight: 500; margin-top: 4px; }
+  .cc-empty { text-align: center; opacity: .6; }
+</style>
 </head>
 <body>
-    <header>
-        <div class="info_header">
-            <img class="logo" src="img/logo_redondo.png" alt="Cravo e Canela">
-            <h1 class="titulo_principal" >Cravo & Canela</h1>
-        </div>
 
-        <nav>
-            <a href="https://www.instagram.com/cravoecanelabjl/" target="_blank"><img src="img/logo_insta.png" alt="instagram_loja"></a>
-            <a href="https://wa.me/5577999280496" target="_blank"><img src="img/logo_whatsapp.png" alt="logo_whatsapp"></a>
-        </nav>
-    </header>
+<!-- ============ HEADER ============ -->
+<div class="cc-header-wrap">
+  <header class="cc-header">
+    <div class="cc-brand">
+      <img class="cc-logo" src="img/logo_redondo.png" alt="cc-logo">
+      <span class="cc-tagline">A moda do jeito que você gosta!</span>
+    </div>
+
+    <h1 class="cc-name">
+      Cravo <span class="cc-amp">&amp;</span> Canela
+      <svg class="cc-name-swirl" viewBox="0 0 84 10" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M2 6.5C16 -1 30 11 42 5.5C54 0 66 9 82 3.5" stroke="#b8192d" stroke-width="1.6" stroke-linecap="round"/>
+      </svg>
+    </h1>
+
+    <div class="cc-links">
+      <a class="cc-link" href="https://instagram.com/cravoecanelabjl" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="3" y="3" width="18" height="18" rx="5" stroke="currentColor" stroke-width="1.7"/>
+          <circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.7"/>
+          <circle cx="17.2" cy="6.8" r="1.1" fill="currentColor"/>
+        </svg>
+        <span class="cc-link-label">Instagram</span>
+      </a>
+      <a class="cc-link" href="https://wa.me/5577999280496" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp">
+        <img class="logo_whatsapp" src="img/logo_whatsapp.png" alt="">
+        <span class="cc-link-label">WhatsApp</span>
+      </a>
+    </div>
+  </header>
+</div>
+
+<!-- ============ CATÁLOGO ============ -->
+<section class="cc-catalogo">
+  <h2>Nossa coleção</h2>
+  <p class="subtitulo">Camisas, blusas, calças, vestidos e shorts — feitos pra durar.</p>
+  <div class="cc-filtros" id="filtros"></div>
+  <div class="cc-grid" id="grid"><p class="cc-empty">Carregando peças...</p></div>
+</section>
+
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyAjcZc1q0lSON9zeFzp5E_uZpX5_pkORjI",
+    authDomain: "cravo-e-canela-55adb.firebaseapp.com",
+    projectId: "cravo-e-canela-55adb",
+    storageBucket: "cravo-e-canela-55adb.firebasestorage.app",
+    messagingSenderId: "352605165922",
+    appId: "1:352605165922:web:ec0db36a5dd6ab1d9e343b"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+
+  let todasPecas = [];
+
+  function renderGrid(pecas) {
+    const grid = document.getElementById('grid');
+    if (pecas.length === 0) {
+      grid.innerHTML = '<p class="cc-empty">Nenhuma peça encontrada.</p>';
+      return;
+    }
+    grid.innerHTML = '';
+    pecas.forEach(p => {
+      const tamanhosHtml = (p.tamanhos || []).map(t => `<span>${t}</span>`).join('');
+      grid.innerHTML += `
+        <div class="cc-produto">
+          <img src="${p.imagem || ''}" onerror="this.style.visibility='hidden'" />
+          <div class="info">
+            <div class="categoria">${p.categoria || ''}</div>
+            <strong>${p.nome}</strong>
+            <div class="cor">${p.cor || ''}</div>
+            <div class="cc-tamanhos">${tamanhosHtml}</div>
+            <div class="preco">R$ ${Number(p.preco).toFixed(2)}</div>
+            ${(p.estoque ?? 0) <= 0 ? '<div class="cc-sem-estoque">Fora de estoque</div>' : ''}
+          </div>
+        </div>`;
+    });
+  }
+
+  function renderFiltros(categorias) {
+    const filtros = document.getElementById('filtros');
+    const botoes = ['Todos', ...categorias];
+    filtros.innerHTML = botoes.map((c, i) =>
+      `<button class="cc-filtro-btn ${i === 0 ? 'ativo' : ''}" data-cat="${c}">${c}</button>`
+    ).join('');
+    filtros.querySelectorAll('.cc-filtro-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        filtros.querySelectorAll('.cc-filtro-btn').forEach(b => b.classList.remove('ativo'));
+        btn.classList.add('ativo');
+        const cat = btn.dataset.cat;
+        renderGrid(cat === 'Todos' ? todasPecas : todasPecas.filter(p => p.categoria === cat));
+      });
+    });
+  }
+
+  // ninguém precisa logar pra ver isso — as regras do Firestore permitem leitura pública
+  db.collection('produtos').orderBy('criadoEm', 'desc').get().then(snapshot => {
+    todasPecas = snapshot.docs.map(doc => doc.data());
+    const categorias = [...new Set(todasPecas.map(p => p.categoria).filter(Boolean))];
+    renderFiltros(categorias);
+    renderGrid(todasPecas);
+  }).catch(err => {
+    document.getElementById('grid').innerHTML = '<p class="cc-empty">Não foi possível carregar as peças agora.</p>';
+    console.error(err);
+  });
+</script>
 </body>
 </html>

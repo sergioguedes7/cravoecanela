@@ -9,7 +9,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;1,9..144,500&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="shortcut icon" href="img/logo_redondo.png" type="image/x-icon">
 
-<!-- Firebase (compat, mais simples pra HTML puro) -->
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
@@ -56,7 +55,6 @@
 
   main { max-width: 760px; margin: 0 auto; padding: 40px 24px 80px; }
 
-  /* ---- LOGIN ---- */
   #loginBox {
     background: var(--card);
     border-radius: 18px;
@@ -99,7 +97,7 @@
 
   #loginError { color: var(--accent); font-size: 13px; margin-top: 10px; min-height: 18px; }
 
-  /* ---- PAINEL ---- */
+
   #panel { display: none; }
   .card {
     background: var(--card);
@@ -123,7 +121,6 @@
     min-height: 70px;
   }
 
-  /* tamanhos como chips selecionáveis */
   .tamanhos-group {
     display: flex;
     flex-wrap: wrap;
@@ -236,7 +233,6 @@
 
 <main>
 
-  <!-- TELA DE LOGIN -->
   <div id="loginBox">
     <h2>Área restrita</h2>
     <p class="sub">Acesso exclusivo para administração do site.</p>
@@ -283,6 +279,17 @@
           <div class="tamanho-chip"><input type="checkbox" id="tam-XG" value="XG"><label for="tam-XG">XG</label></div>
           <div class="tamanho-chip"><input type="checkbox" id="tam-UN" value="Único"><label for="tam-UN">Ún.</label></div>
         </div>
+        
+        <div style="display: none;" class="tamanhos-group" id="tamanhosNumeros">
+          <div class="tamanho-chip"><input type="checkbox" id="tam-36" value="36"><label for="tam-36">36</label></div>
+          <div class="tamanho-chip"><input type="checkbox" id="tam-38" value="38"><label for="tam-38">38</label></div>
+          <div class="tamanho-chip"><input type="checkbox" id="tam-40" value="40"><label for="tam-40">40</label></div>
+          <div class="tamanho-chip"><input type="checkbox" id="tam-42" value="42"><label for="tam-42">42</label></div>
+          <div class="tamanho-chip"><input type="checkbox" id="tam-44" value="44"><label for="tam-44">44</label></div>
+          <div class="tamanho-chip"><input type="checkbox" id="tam-46" value="46"><label for="tam-46">46</label></div>
+          <div class="tamanho-chip"><input type="checkbox" id="tam-48" value="48"><label for="tam-48">48</label></div>
+          <div class="tamanho-chip"><input type="checkbox" id="tam-50" value="50"><label for="tam-50">50</label></div>
+        </div>
 
         <div class="row2">
           <div>
@@ -316,12 +323,44 @@
       <div id="listaProdutos"><div id="emptyState">Carregando...</div></div>
     </div>
   </div>
-
+  
 </main>
 
 <script>
-  // ⚠️ Troque pelos dados do SEU projeto Firebase
-  // (Console Firebase → Configurações do projeto → Seus apps → SDK setup)
+
+  document.getElementById('categoria').addEventListener('change', (e) => {
+    const categoriasComNumero = ['Calças', 'Shorts'];
+    const usaNumero = categoriasComNumero.includes(e.target.value);
+    document.getElementById('tamanhosNumeros').style.display = usaNumero ? 'flex' : 'none';
+    document.getElementById('tamanhosGroup').style.display = usaNumero ? 'none' : 'flex';
+    const grupoEscondido = usaNumero
+      ? document.getElementById('tamanhosGroup')
+      : document.getElementById('tamanhosNumeros');
+    grupoEscondido.querySelectorAll('input:checked').forEach(input => {
+      input.checked = false;
+    });
+  });
+
+  document.getElementById('produtoForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const msg = document.getElementById('formMsg');
+    const submitBtn = e.target.querySelector('button[type="submit"]');
+    msg.textContent = '';
+    msg.className = '';
+
+    const nome = document.getElementById('nome').value.trim();
+    const categoria = document.getElementById('categoria').value;
+    const cor = document.getElementById('cor').value.trim();
+    const preco = parseFloat(document.getElementById('preco').value);
+    const estoque = parseInt(document.getElementById('estoque').value) || 0;
+    const arquivoImagem = document.getElementById('imagem').files[0];
+    const descricao = document.getElementById('descricao').value.trim();
+
+    const tamanhos = Array.from(document.querySelectorAll('#tamanhosGroup input:checked, #tamanhosNumeros input:checked'))
+      .map(input => input.value);
+
+  });
+  
   const firebaseConfig = {
     apiKey: "AIzaSyAjcZc1q0lSON9zeFzp5E_uZpX5_pkORjI",
     authDomain: "cravo-e-canela-55adb.firebaseapp.com",
@@ -334,10 +373,7 @@
   firebase.initializeApp(firebaseConfig);
   const auth = firebase.auth();
   const db = firebase.firestore();
-
-  // ---- REDIMENSIONA E COMPRIME A IMAGEM NO NAVEGADOR ----
-  // Isso evita depender de Storage/serviço externo: a foto vira um texto
-  // (base64) pequeno o suficiente pra caber dentro do próprio produto no Firestore.
+  
   function redimensionarImagem(file, larguraMax = 800, qualidade = 0.72) {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -360,7 +396,7 @@
     });
   }
 
-  // ---- PREVIEW DA IMAGEM ESCOLHIDA ----
+
   document.getElementById('imagem').addEventListener('change', (e) => {
     const file = e.target.files[0];
     const nomeSpan = document.getElementById('uploadFileName');
@@ -369,7 +405,7 @@
       nomeSpan.textContent = 'Nenhuma imagem selecionada';
       preview.style.display = 'none';
       return;
-    }
+    } 
     nomeSpan.textContent = file.name;
     const reader = new FileReader();
     reader.onload = (ev) => {
@@ -384,7 +420,7 @@
   const logoutBtn = document.getElementById('logoutBtn');
   const loginError = document.getElementById('loginError');
 
-  // ---- LOGIN ----
+
   document.getElementById('loginBtn').addEventListener('click', () => {
     const email = document.getElementById('email').value.trim();
     const senha = document.getElementById('senha').value;
@@ -426,7 +462,7 @@
     const arquivoImagem = document.getElementById('imagem').files[0];
     const descricao = document.getElementById('descricao').value.trim();
 
-    const tamanhos = Array.from(document.querySelectorAll('#tamanhosGroup input:checked'))
+    const tamanhos = Array.from(document.querySelectorAll('#tamanhosGroup input:checked, #tamanhosNumeros input:checked'))
       .map(input => input.value);
 
     if (!nome || isNaN(preco) || !categoria) {
@@ -450,6 +486,7 @@
           return;
         }
       }
+
 
       msg.textContent = 'Salvando peça...';
       await db.collection('produtos').add({

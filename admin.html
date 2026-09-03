@@ -19,8 +19,12 @@
 
 <div class="topbar">
   <h1>Loja — Admin</h1>
-  <button id="logoutBtn">Sair</button>
+  <div class="topbar-actions">
+    <a href="index.html" id="voltarLojaBtn">← Voltar à loja</a>
+    <button id="logoutBtn">Sair</button>
+  </div>
 </div>
+
 
 <main>
 
@@ -48,10 +52,14 @@
             <label for="categoria">Categoria</label>
             <select id="categoria" required>
               <option value="">Selecione</option>
-              <option value="Camisas">Camisas</option>
               <option value="Blusas">Blusas</option>
-              <option value="Calças">Calças</option>
+              <option value="Vestidos">Vestidos</option>
               <option value="Shorts">Shorts</option>
+              <option value="Calças">Calças</option>
+              <option value="Croppeds">Croppeds</option>
+              <option value="Bermudas">Bermudas</option>
+              <option value="Biquíni">Biquíni</option>
+              <option value="Roupas Fitness">Roupas Fitness</option>
             </select>
           </div>
           <div>
@@ -120,7 +128,7 @@
 <script>
 
   document.getElementById('categoria').addEventListener('change', (e) => {
-    const categoriasComNumero = ['Calças', 'Shorts'];
+    const categoriasComNumero = ['Calças', 'Shorts', 'Bermudas'];
     const usaNumero = categoriasComNumero.includes(e.target.value);
     document.getElementById('tamanhosNumeros').style.display = usaNumero ? 'flex' : 'none';
     document.getElementById('tamanhosGroup').style.display = usaNumero ? 'none' : 'flex';
@@ -132,26 +140,6 @@
     });
   });
 
-  document.getElementById('produtoForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const msg = document.getElementById('formMsg');
-    const submitBtn = e.target.querySelector('button[type="submit"]');
-    msg.textContent = '';
-    msg.className = '';
-
-    const nome = document.getElementById('nome').value.trim();
-    const categoria = document.getElementById('categoria').value;
-    const cor = document.getElementById('cor').value.trim();
-    const preco = parseFloat(document.getElementById('preco').value);
-    const estoque = parseInt(document.getElementById('estoque').value) || 0;
-    const arquivoImagem = document.getElementById('imagem').files[0];
-    const descricao = document.getElementById('descricao').value.trim();
-
-    const tamanhos = Array.from(document.querySelectorAll('#tamanhosGroup input:checked, #tamanhosNumeros input:checked'))
-      .map(input => input.value);
-
-  });
-  
   const firebaseConfig = {
     apiKey: "AIzaSyAjcZc1q0lSON9zeFzp5E_uZpX5_pkORjI",
     authDomain: "cravo-e-canela-55adb.firebaseapp.com",

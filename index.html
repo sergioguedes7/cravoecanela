@@ -57,11 +57,39 @@
 
 <section class="cc-catalogo">
   <h2>Nossa coleção</h2>
-  <p class="subtitulo">Camisas, blusas, calças, vestidos e shorts — feitos pra durar.</p>
+  <p class="subtitulo">Blusas, vestidos, calças, shorts, croppeds, bermudas, biquínis e fitness — feitos pra durar.</p>
   <div class="cc-filtros" id="filtros"></div>
   <div class="cc-grid" id="grid"><p class="cc-empty">Carregando peças...</p></div>
 </section>
+<footer class="footer">
+    <div class="footer-container">
 
+        <div class="footer-logo">
+            <h2>CRAVO E CANELA</h2>
+            <p>A moda do jeito que você gosta.</p>
+        </div>
+
+        <div class="footer-links">
+            <h3>Links</h3>
+
+            <a href="index.html">Loja</a>
+            <a href="sobre-nos.html">Sobre Nós</a>
+            <a href="contato.html">Contato</a>
+        </div>
+
+        <div class="footer-contact">
+            <h3>Contato</h3>
+
+            <p>(77) 9928-0496</p>
+            <p>Bom Jesus da Lapa - BA</p>
+        </div>
+
+    </div>
+
+    <div class="footer-bottom">
+        <p>© 2026 Cravo&Canela - Todos os direitos reservados.</p>
+    </div>
+</footer>
 <script>
   const firebaseConfig = {
     apiKey: "AIzaSyAjcZc1q0lSON9zeFzp5E_uZpX5_pkORjI",
@@ -114,7 +142,6 @@
             <div class="preco">R$ ${Number(p.preco).toFixed(2)}</div>
             ${semEstoque ? '<div class="cc-sem-estoque">Fora de estoque</div>' : ''}
             <a class="cc-btn-whatsapp" href="${linkWhatsApp(p)}" target="_blank" rel="noopener noreferrer">
-              <img src="img/logo_whatsapp.png" alt="WhatsApp" />
               Comprar no WhatsApp
             </a>
           </div>

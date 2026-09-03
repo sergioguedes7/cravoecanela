@@ -1,6 +1,6 @@
 :root {
     --bg: #bf7577;
-    --bg-deep: #c39fa0;
+    --bg-deep: #db9395;
     --accent: #b8192d;
     --ink: #3a2115;
     --cream: #f7ece4;
@@ -23,6 +23,28 @@
     border-bottom: 1px solid rgba(58,33,21,0.14);
   }
   .topbar h1 { font-size: 22px; font-weight: 600; }
+  .topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+#voltarLojaBtn {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+  border: 1px solid rgba(58,33,21,0.3);
+  color: var(--ink);
+  padding: 8px 16px;
+  border-radius: 999px;
+  font-family: 'Jost', sans-serif;
+  font-size: 13px;
+  transition: background .15s ease, color .15s ease, border-color .15s ease;
+}
+#voltarLojaBtn:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--cream);
+}
   .topbar .amp { color: var(--accent); font-style: italic; font-weight: 500; }
   #logoutBtn {
     display: none;
